@@ -211,7 +211,10 @@ public class ComplementoInscribirEvento extends javax.swing.JFrame {
         try {
             if (jList1.isSelectionEmpty()) {
                 throw new Exception("No hay ningun asistente para esta inscripción.");
-            } else {
+            } else if(jTextField5.getText().equals("") || Integer.parseInt(jTextField5.getText())<1 ){
+                throw new Exception("No se ha definido un numero de cuotas valido");
+            }
+            else {
                 e = getInscribir().getEvento();
                 String message = "La actual inscripcion cuenta con la siguiente informacion:\n"
                         + "Evento: " + e.getNombre() + "\n "
@@ -239,10 +242,10 @@ public class ComplementoInscribirEvento extends javax.swing.JFrame {
                     String estado = "";
                     if (jComboBox1.getSelectedIndex() == 0) {
                         tipoPago = "V";
-                        estado = "P";
+                        estado = "I";
                     } else {
                         tipoPago = "N";
-                        estado = "A";
+                        estado = "P";
                     }
                     inscripcion.setEstado(estado);
                     inscripcion.setTipoPago(tipoPago);

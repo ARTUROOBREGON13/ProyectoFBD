@@ -8,8 +8,6 @@ package control;
 import control.DAO.EventoDAO;
 import control.DAO.InscripcionDAO;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import modelo.Evento;
 import modelo.Familiar;
 import modelo.Inscripcion;
@@ -64,11 +62,6 @@ public class ControlAsociado {
             i.setAsistentes(ConsultarDetalleInscripcion(i));
         }
         return lista;
-    }
-    
-    public Familiar ConsultarAsociado(Inscripcion i) throws Exception {
-        System.out.println("------>"+i.getCodigo());
-        return InscripcionDAO.ConsultarAsociadoDetalle(i);
     }
 
     public void CancelarInscripcion(Inscripcion i) throws Exception {

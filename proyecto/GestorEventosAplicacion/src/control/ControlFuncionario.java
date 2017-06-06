@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import modelo.Familiar;
 import modelo.Usuario;
 import modelo.Evento;
+import modelo.Inscripcion;
 
 /**
  * @author usuario
@@ -65,6 +66,28 @@ public class ControlFuncionario {
                 + "Total a pagar la entidad: " + (e.getCostoTotal() - t_Recaudado);
 
         return cadena;
+    }
+
+    public ArrayList<Inscripcion> ConsultarInscripcionesPendientes() throws Exception {
+        ArrayList<Inscripcion> lista;
+        lista = InscripcionDAO.ConsultarInscripcionesPendientes();
+        if (lista != null) {
+            for (Inscripcion i : lista) {
+                i.setAsistentes(ConsultarDetalleInscripcion(i));
+            }
+        }
+        return lista;
+    }
+
+    private ArrayList<Familiar> ConsultarDetalleInscripcion(Inscripcion i) throws Exception {
+        return InscripcionDAO.ConsultarInscripcionesDetalle(i);
+    }
+
+    public String GenerarPago(Inscripcion ins) throws Exception {
+        int consecutivo = InscripcionDAO.ObtenerConsecutivoPago();
+        InscripcionDAO.GenerarPago(ins, consecutivo);
+        InscripcionDAO.CambiarEstadoInscripcion(ins);
+        return "Registro Exitoso.\nCodigo del comprobante de pago: " + consecutivo;
     }
 
 }
