@@ -22,7 +22,7 @@ public class Menu extends JFrame {
     private ControlAsociado controlA;
     private ControlFuncionario controlF;
     private ControlMultivalor controlM;
-    private JFrame insEven, canInsc, modEven, regEven, cerEven, regPag;
+    private JFrame insEven, canInsc, modEven, regEven, cerEven, regPag, regPago;
     
     Menu(Usuario usuario, int i, JFrame Login) {
         Login.dispose();
@@ -99,6 +99,11 @@ public class Menu extends JFrame {
         });
 
         jButton7.setText("Registar Pago");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -188,6 +193,10 @@ public class Menu extends JFrame {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         cerEven = new CierreEvento(this);
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        regPago = new RegistrarPago(this);
+    }//GEN-LAST:event_jButton7ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
