@@ -65,6 +65,11 @@ public class ControlAsociado {
         }
         return lista;
     }
+    
+    public Familiar ConsultarAsociado(Inscripcion i) throws Exception {
+        System.out.println("------>"+i.getCodigo());
+        return InscripcionDAO.ConsultarAsociadoDetalle(i);
+    }
 
     public void CancelarInscripcion(Inscripcion i) throws Exception {
         InscripcionDAO.CancelarInscripcion(i);

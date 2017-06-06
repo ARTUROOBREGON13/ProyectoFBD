@@ -38,6 +38,10 @@ public class InscripcionDAO {
             + "FAMILIAR FAM WHERE DET.K_INSCRIPCION = ? AND DET.K_ASOCIADO = FAM.K_IDUSUARIO AND DET.K_FAMILIAR = FAM.K_IDFAMILIAR";
     private static String cs_MODIFICACION_COPAGO = "UPDATE INSCRIPCION INS SET INS.V_VALORTOTAL = (SELECT EVT.V_VALORCOPAGO "
             + "FROM EVENTO EVT WHERE EVT.K_CODIGO = ? )*INS.Q_CANTASISTENTES WHERE INS.I_ESTADO = 'I'";
+    private static String cs_CONSULTAR_ASOCIADO_INSCRIPCION = "SELECT DET.K_FAMILIAR F_ID, FAM.N_NOMBRE NOMBRE,"
+            + " FAM.N_APELLIDO APELLIDO,  FAM.I_TIPOID T_ID, FAM.PARENTEZCO PARENTEZCO FROM DETALLE_INSCRIPCION DET,FAMILIAR FAM"
+            + "  WHERE  DET.K_INSCRIPCION = ? AND DET.K_FAMILIAR=DET.K_ASOCIADO AND   DET.K_ASOCIADO = FAM.K_IDUSUARIO AND FAM.PARENTEZCO='Asociado'";
+    
 
     public static int ConsultarConsecutivo(String codigo) throws Exception {
         ResultSet rs = null;
@@ -152,6 +156,27 @@ public class InscripcionDAO {
         }
         return asistentes;
     }
+    
+    public static Familiar  ConsultarAsociadoDetalle(Inscripcion i ) throws Exception {
+        ResultSet rs = null;
+        PreparedStatement ps;
+        Familiar f = null;
+        try {
+             System.out.println(">>>>>>"+i.getCodigo());
+            ps = ConexionDB.getConexion().prepareStatement(cs_CONSULTAR_ASOCIADO_INSCRIPCION);
+            ps.setDouble(1, i.getCodigo());
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                f = new Familiar();
+                getFamiliar(f, rs);
+            }
+        } catch (Exception ex) {
+            throw new Exception("Error en la consulta del asociado - " + ex.getMessage());
+        }
+        return f;
+    }
+    
+    
 
     private static void getFamiliar(Familiar f, ResultSet rs) throws SQLException {
         f.setId(rs.getString("F_ID"));

@@ -5,19 +5,35 @@
  */
 package vista;
 
+
+import control.ControlAsociado;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.text.BadLocationException;
+import modelo.Evento;
+import modelo.Familiar;
+import modelo.Inscripcion;
+import modelo.Usuario;
 /**
  *
  * @author EDWAR
  */
 public class RegistrarPago extends javax.swing.JFrame {
 
-    /**
-     * Creates new form RegistrarPago
-     */
-    public RegistrarPago() {
+    private Menu menu;
+    private Evento e;
+    private ArrayList<Inscripcion> inscripciones;
+    private ArrayList<Familiar> Familiares;
+    
+    public RegistrarPago(Menu menu) {
         initComponents();
-    }
-
+        this.setVisible(true);
+        this.menu = menu;
+        cargar();
+     }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -55,6 +71,11 @@ public class RegistrarPago extends javax.swing.JFrame {
         jButton2.setText("Aceptar");
 
         jButton3.setText("Cancelar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -108,40 +129,15 @@ public class RegistrarPago extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        getMenu().setVisible(true);
+        getMenu().Close(this);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RegistrarPago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RegistrarPago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RegistrarPago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RegistrarPago.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new RegistrarPago().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -154,4 +150,51 @@ public class RegistrarPago extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
+
+    public Menu getMenu() {
+        return menu;
+    }
+    
+    private void FillList(ArrayList<String> l) throws Exception {
+        DefaultListModel<String> lista;
+        lista = new DefaultListModel<String>();
+        for (String s : l) {
+            lista.addElement(s);
+        }
+        jList1.setModel((lista));
+    }
+    
+    
+    private void cargar() {
+        try {
+            Usuario user = getMenu().getUsuario();
+            ControlAsociado cA;
+            String tipoUsuario = "";
+            tipoUsuario = user.getTipo();
+            ArrayList<String> l = new ArrayList<String>();
+            cA = getMenu().getControlA();
+            if (tipoUsuario.equals("Asociado")) {
+
+                inscripciones = cA.ConsultarInscripcionesAsociado(user.getId());
+            } else {
+                inscripciones = cA.ConsultarTodasInscripciones();
+                
+            }
+            if (inscripciones != null) {
+                for (Inscripcion i : inscripciones) {
+                    Familiar F = cA.ConsultarAsociado(i);
+                   // l.add(" -Cod Evento: "+i.getCodigo() + " - Asistentes: " + i.getAsistentes().size() + " - " + i.getValorTotal());
+                    l.add("Cod Aso "+F.getId()+" -Cod Evento: "+i.getCodigo() + " - Asistentes: " + i.getAsistentes().size() + " - " + i.getValorTotal());
+                
+                }
+
+                FillList(l);
+            }
+            else{
+                throw new Exception("No hay ninguna inscripcion disponible para cancelacion");
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }
 }
