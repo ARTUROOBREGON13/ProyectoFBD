@@ -31,7 +31,7 @@ public class EventoDAO {
             + "TO_CHAR(EVENTO.F_FIN, 'DD/MM/YYYY') FFIN, TO_CHAR(EVENTO.F_LIMITEINSCRIPCION, 'DD/MM/YYYY') FLIM, "
             + "EVENTO.Q_LIMITEPARTICIPANTES PARTICI,(EVENTO.Q_LIMITEPARTICIPANTES - EVENTO.Q_CUPOSDISPONIBLES) ASISTEN, EVENTO.V_COSTOTOTAL COSTO, "
             + "EVENTO.V_PORCSUBSIDIO PORCSUB, V_VALORCOPAGO COPAGO, CASE EVENTO.I_ESTADO WHEN 'A' THEN 'Activo' WHEN 'T' THEN 'Terminado' END AS ESTADO "
-            + "FROM EVENTO, TIPO, PROVEEDOR WHERE EVENTO.K_TIPO=TIPO.K_CODIGO AND EVENTO.K_NITPROVEEDOR = PROVEEDOR.K_NITPROVEEDOR AND EVENTO.I_ESTADO = 'A' AND "
+            + "FROM EVENTO, TIPO, PROVEEDOR WHERE EVENTO.K_TIPO=TIPO.K_CODIGO AND EVENTO.K_NITPROVEEDOR = PROVEEDOR.K_NITPROVEEDOR AND "
             + "EVENTO.Q_CUPOSDISPONIBLES>0 AND EVENTO.K_CODIGO = ?";
     private static String cs_INSERCION_EVENTO = "INSERT INTO EVENTO VALUES (?,?,?,?,?,?,TO_DATE(?),TO_DATE(?),TO_DATE(?),?,?,?,?,?,?)";
     private static String cs_MODIFICACION_EVENTO = "UPDATE EVENTO EVT SET EVT.N_OBSERVACION = ?, EVT.F_LIMITEINSCRIPCION = TO_DATE(?), EVT.Q_LIMITEPARTICIPANTES = ?, "
@@ -42,7 +42,7 @@ public class EventoDAO {
     private static String cs_ASISTENCIA_EVENTO = "SELECT COUNT(*) FROM DETALLE_INSCRIPCION DET, INSCRIPCION INS, EVENTO EVT "
             + "WHERE EVT.K_CODIGO = INS.K_CODIGOEVENTO AND INS.K_CODIGO = DET.K_INSCRIPCION "
             + "AND INS.I_ESTADO = 'P' AND EVT.K_CODIGO = ?";
-    private static String cs_GENERAR_PAGO = "INSERT INTO PAGOLOGISTICA VALUES (?,SYSDATE,?);";
+    private static String cs_GENERAR_PAGO = "INSERT INTO PAGOLOGISTICA VALUES (?,SYSDATE,?)";
 
     public static void CrearEvento(Evento e) throws Exception {
         try {
@@ -314,7 +314,6 @@ public class EventoDAO {
                 ConexionDB.getConexion().rollback();
                 throw new Exception("");
             }
-            ConexionDB.getConexion().commit();
         } catch (Exception ex) {
             ConexionDB.getConexion().rollback();
             throw new Exception("Error en la actualizacion.");
@@ -329,14 +328,16 @@ public class EventoDAO {
             PreparedStatement ps = ConexionDB.getConexion().prepareStatement(cs_ASISTENCIA_EVENTO);
             ps.setDouble(1, Double.parseDouble(e.getCodigo()));
             rs = ps.executeQuery();
-            total = rs.getInt(1);
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
         } catch (Exception ex) {
-            throw new Exception("Error en la actualizacion.");
+            throw new Exception("Error en la consulta.");
         }
         return total;
     }
 
-    public static void GenerarPagoProveedor(Evento e) throws Exception{
+    public static void GenerarPagoProveedor(Evento e) throws Exception {
         try {
             int r = 0;
             PreparedStatement ps = ConexionDB.getConexion().prepareStatement(cs_GENERAR_PAGO);
@@ -349,8 +350,8 @@ public class EventoDAO {
             }
             ConexionDB.getConexion().commit();
         } catch (Exception ex) {
-            throw new Exception("Error en la insercion.");
-            
+            ConexionDB.getConexion().rollback();
+            throw new Exception("Error en la insercion. " + ex.getMessage());
         }
     }
 }

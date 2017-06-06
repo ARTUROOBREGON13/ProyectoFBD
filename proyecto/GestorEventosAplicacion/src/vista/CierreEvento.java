@@ -173,7 +173,7 @@ public class CierreEvento extends javax.swing.JFrame {
                 String codigo = v[0];
                 e = getMenu().getControlA().ConsultarEventoDetalle(codigo);
                 s = getMenu().getControlF().GenerarEstadisticas(e);
-                
+                JOptionPane.showMessageDialog(null, s);
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());

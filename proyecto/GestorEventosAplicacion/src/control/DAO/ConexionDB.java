@@ -9,8 +9,8 @@ import java.sql.*;
 public class ConexionDB {
 
     static String url = "jdbc:oracle:thin:@localhost:1521:xe";
-    static String usuario = "eventos";
-    static String password = "eventos";
+    static String usuario = "Eventos";
+    static String password = "Eventos";
 
     private static Connection conexion = null;
 

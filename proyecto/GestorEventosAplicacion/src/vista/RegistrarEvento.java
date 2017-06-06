@@ -282,6 +282,7 @@ public class RegistrarEvento extends javax.swing.JFrame {
             e.setObservacion(jTextArea1.getText());
             String s = getMenu().getControlF().CrearEvento(e);
             JOptionPane.showMessageDialog(null, s);
+            jButton2ActionPerformed(evt);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }

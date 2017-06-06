@@ -40,7 +40,7 @@ public class ControlFuncionario {
     }
 
     public String GenerarEstadisticas(Evento e) throws Exception {
-        if (e.getEstado() == "Activo") {
+        if (e.getEstado().equals("Activo")) {
             EventoDAO.CerrarEvento(e);
             EventoDAO.GenerarPagoProveedor(e);
         }
@@ -61,8 +61,8 @@ public class ControlFuncionario {
                 + "Costo Total: " + String.valueOf(e.getCostoTotal()) + "\n"
                 + "% Subsidio: " + e.getPorcSubsidio() + "%\n"
                 + "ESTADO: " + e.getEstado() + "\n\n"
-                + "Total Recaudado: "+ t_Recaudado +"\n\n"
-                + "Total a pagar la entidad: " + (e.getCostoTotal()-t_Recaudado);
+                + "Total Recaudado: " + t_Recaudado + "\n\n"
+                + "Total a pagar la entidad: " + (e.getCostoTotal() - t_Recaudado);
 
         return cadena;
     }
